@@ -10,7 +10,7 @@ type Any = interface{}
 
 // ISerializer provides a generic way to define Serializer
 type ISerializer interface {
-	Init(object Any) error
+	Init(object Any) ISerializer
 	Serialize() (map[string]Any, error)
 }
 
@@ -19,16 +19,18 @@ type BaseSerializer struct {
 	Object          Any
 	cachedHash      map[string]func(*BaseSerializer) Any
 	objectElemValue reflect.Value
+	serializeError  error
 }
 
 // Init takes an object for serialization
-func (ser *BaseSerializer) Init(object Any) error {
+func (ser *BaseSerializer) Init(object Any) ISerializer {
 	if object == nil {
-		return errors.New("object is nil")
+		ser.serializeError = errors.New("object is nil")
+		return ser
 	}
 	ser.Object = object
 	ser.objectElemValue = reflect.ValueOf(object).Elem()
-	return nil
+	return ser
 }
 
 // RegisterFieldName defines a `name` field with its value from ser.Object[valueName]
@@ -46,10 +48,10 @@ func (ser *BaseSerializer) RegisterFieldFunc(name string, handler func(*BaseSeri
 }
 
 // Serialize generates the result.
-func (ser *BaseSerializer) Serialize() map[string]Any {
+func (ser *BaseSerializer) Serialize() (map[string]Any, error) {
 	resultHash := make(map[string]Any)
 	for k, v := range ser.cachedHash {
 		resultHash[k] = v(ser)
 	}
-	return resultHash
+	return resultHash, ser.serializeError
 }
