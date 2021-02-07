@@ -29,6 +29,7 @@ func (ser *BaseSerializer) Init(object Any) ISerializer {
 	}
 	ser.Object = object
 	ser.objectElemValue = reflect.ValueOf(object).Elem()
+	ser.cachedHash = make(map[string]func(*BaseSerializer) Any)
 	return ser
 }
 
