@@ -26,7 +26,6 @@ type BaseSerializer struct {
 func (ser *BaseSerializer) Init(object Any) ISerializer {
 	if object == nil {
 		ser.serializeError = errors.New("object is nil")
-		return ser
 	}
 	ser.Object = object
 	ser.objectElemValue = reflect.ValueOf(object).Elem()
