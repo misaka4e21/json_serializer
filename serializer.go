@@ -55,3 +55,15 @@ func (ser *BaseSerializer) Serialize() (map[string]Any, error) {
 	}
 	return resultHash, ser.serializeError
 }
+
+// SerializeIgnoreNull generates the result, with nils ignored.
+func (ser *BaseSerializer) SerializeIgnoreNull() (map[string]Any, error) {
+	resultHash := make(map[string]Any)
+	for k, v := range ser.cachedHash {
+		value := v(ser)
+		if value != nil {
+			resultHash[k] = value
+		}
+	}
+	return resultHash, ser.serializeError
+}
