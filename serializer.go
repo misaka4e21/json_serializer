@@ -12,6 +12,7 @@ type Any = interface{}
 type ISerializer interface {
 	Init(object Any) ISerializer
 	Serialize() (map[string]Any, error)
+	SerializeIgnoreNull() (map[string]Any, error)
 }
 
 // BaseSerializer implements a basic serializer to map[string]Any
